@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cấu hình IDE (PyCharm, VSCode...)
+.vscode/
+.idea/
+
+# Môi trường ảo Python (virtualenv)
+venv/
+.venv/
+ENV/
+env/
+
+# Model đã lưu
+*.h5
+*.hdf5
+
+# Các file log, checkpoints
+*.log
+*.ckpt
+checkpoint/
+
+# Dataset local (nếu có)
+data/
+datasets/
+*.zip
+*.tar.gz
+
+# File tạm thời, cache
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Các file hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ảnh input để test
+#*.png
+#*.jpg
+#*.jpeg
+#*.bmp
+#*.gif
+
+# Các file Streamlit cache nếu có
+.streamlit/
