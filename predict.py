@@ -17,4 +17,4 @@ def predict(image_path):
 
 # Ví dụ:
 if __name__ == "__main__":
-    predict('../img/img_1.png')
+    predict('img/img_1.png')
