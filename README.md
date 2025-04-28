@@ -10,3 +10,11 @@
 | 5 | Chỉnh sửa dòng đường dẫn trong `predict.py` thành `'img/dog.jpg'` |  |
 | 6 | Chạy dự đoán | `python predict.py` |
 | 7 | Xem kết quả trên console: "Predicted: dog" |  |
+
+# **Tính năng nâng cao:**
+* Upload nhiều ảnh
+* Predict từng ảnh
+* Top-N Slider linh động
+* Cảnh báo confidence thấp
+* Download CSV
+* Summary Dashboard + Chart
