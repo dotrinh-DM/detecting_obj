@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from utils import preprocess_image
 from PIL import Image
-import altair as alt  # thêm Altair để vẽ chart đẹp hơn
+import altair as alt
 
 # Load model
 model = tf.keras.models.load_model('cnn_cifar10_model.h5')
@@ -15,6 +15,9 @@ class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
 
 st.title("🚀 Image Recognition Demo")
 st.write("Upload one or more images and let the model predict them!")
+
+# Top-N Slider
+top_n = st.slider('Select Top-N Predictions to Display', min_value=1, max_value=10, value=3)
 
 uploaded_files = st.file_uploader("Choose image files...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
@@ -29,22 +32,27 @@ if uploaded_files:
             raw_preds = model.predict(img_array)[0]
             predictions = tf.nn.softmax(raw_preds).numpy()
 
-            top_3_indices = predictions.argsort()[-3:][::-1]
-            top_3_labels = [(class_names[i], predictions[i]) for i in top_3_indices]
+            # lấy top-N theo slider
+            top_n_indices = predictions.argsort()[-top_n:][::-1]
+            top_n_labels = [(class_names[i], predictions[i]) for i in top_n_indices]
 
-            # DataFrame cho bảng
+            # Tạo bảng kết quả
             df_result = pd.DataFrame({
-                "Label": [label for label, _ in top_3_labels],
-                "Confidence (%)": [score*100 for _, score in top_3_labels]
+                "Label": [label for label, _ in top_n_labels],
+                "Confidence (%)": [score*100 for _, score in top_n_labels]
             })
 
-            st.subheader(f"🎯 Top 3 Predictions for {uploaded_file.name}:")
+            # Kiểm tra Confidence cao nhất
+            if top_n_labels[0][1] * 100 < 60:
+                st.warning(f"⚠️ Low confidence for {uploaded_file.name}: Hard to predict! Highest = {top_n_labels[0][1]*100:.2f}%")
+
+            st.subheader(f"🎯 Top {top_n} Predictions for {uploaded_file.name}:")
             st.table(df_result)
 
-            # DataFrame cho biểu đồ
+            # Vẽ bar chart cho top-N
             df_chart = pd.DataFrame({
-                'Label': [label for label, _ in top_3_labels],
-                'Confidence': [score*100 for _, score in top_3_labels]
+                'Label': [label for label, _ in top_n_labels],
+                'Confidence': [score*100 for _, score in top_n_labels]
             })
 
             chart = alt.Chart(df_chart).mark_bar().encode(
