@@ -26,6 +26,9 @@ uploaded_files = st.file_uploader("Choose image files...", type=["jpg", "jpeg", 
 good_predictions = 0
 bad_predictions = 0
 
+# Danh sách lưu toàn bộ kết quả để gom CSV tổng
+all_predictions = []
+
 if uploaded_files:
     with st.spinner('🔍 Predicting... Please wait...'):
         for uploaded_file in uploaded_files:
@@ -41,13 +44,17 @@ if uploaded_files:
             top_n_indices = predictions.argsort()[-top_n:][::-1]
             top_n_labels = [(class_names[i], predictions[i]) for i in top_n_indices]
 
-            # Tạo bảng kết quả
+            # Tạo bảng kết quả cho ảnh hiện tại
             df_result = pd.DataFrame({
+                "Image Name": [uploaded_file.name]*top_n,
                 "Label": [label for label, _ in top_n_labels],
                 "Confidence (%)": [score*100 for _, score in top_n_labels]
             })
 
-            # Check Confidence cao nhất
+            # Lưu kết quả vào danh sách tổng
+            all_predictions.append(df_result)
+
+            # Kiểm tra confidence cao nhất
             if top_n_labels[0][1] * 100 < 60:
                 st.warning(f"⚠️ Low confidence for {uploaded_file.name}: Hard to predict! Highest = {top_n_labels[0][1]*100:.2f}%")
                 bad_predictions += 1
@@ -56,15 +63,6 @@ if uploaded_files:
 
             st.subheader(f"🎯 Top {top_n} Predictions for {uploaded_file.name}:")
             st.table(df_result)
-
-            # Button Download CSV cho từng ảnh
-            csv = df_result.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Download CSV",
-                data=csv,
-                file_name=f'{uploaded_file.name}_predictions.csv',
-                mime='text/csv',
-            )
 
             # Vẽ bar chart
             df_chart = pd.DataFrame({
@@ -81,7 +79,20 @@ if uploaded_files:
 
             st.altair_chart(chart, use_container_width=True)
 
+    # Kết thúc Predict tất cả ảnh
     st.success("✅ All Predictions Completed!")
+
+    # 📦 Gom tất cả thành 1 bảng lớn
+    df_all_predictions = pd.concat(all_predictions, ignore_index=True)
+
+    # Download tổng toàn bộ CSV
+    csv_total = df_all_predictions.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Download All Predictions (CSV)",
+        data=csv_total,
+        file_name="all_predictions_summary.csv",
+        mime='text/csv',
+    )
 
     # Tổng kết summary dashboard
     st.subheader("📊 Summary Dashboard:")
