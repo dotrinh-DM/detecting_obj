@@ -85,12 +85,22 @@ if uploaded_files:
     # 📦 Gom tất cả thành 1 bảng lớn
     df_all_predictions = pd.concat(all_predictions, ignore_index=True)
 
-    # Download tổng toàn bộ CSV
-    csv_total = df_all_predictions.to_csv(index=False).encode('utf-8')
+    # 🎯 Filter Confidence
+    st.subheader("🔍 Filter Predictions by Confidence Threshold")
+    confidence_threshold = st.slider('Select minimum confidence (%) to display', 0, 100, 0)
+
+    df_filtered = df_all_predictions[df_all_predictions['Confidence (%)'] >= confidence_threshold]
+
+    # Preview kết quả sau filter
+    st.write(f"📊 Showing predictions with confidence >= {confidence_threshold}%:")
+    st.dataframe(df_filtered)
+
+    # Download CSV sau khi lọc
+    csv_total_filtered = df_filtered.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="📥 Download All Predictions (CSV)",
-        data=csv_total,
-        file_name="all_predictions_summary.csv",
+        label="📥 Download Filtered Predictions (CSV)",
+        data=csv_total_filtered,
+        file_name="filtered_predictions_summary.csv",
         mime='text/csv',
     )
 
