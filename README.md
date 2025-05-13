@@ -18,3 +18,7 @@
 * Cảnh báo confidence thấp
 * Download CSV
 * Summary Dashboard + Chart
+
+# **Demo:**
+
+![screencapture-localhost-8501-2025-05-13-16_26_56](https://github.com/user-attachments/assets/b12c1366-b9d9-4182-ae2d-fab80ed03884)
